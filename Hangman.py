@@ -94,7 +94,7 @@ man_fail = """
 
 """
 
-man_stages = [man0, man1, man2, man3, man4, man5, man6, man7]
+man_stages = [man0, man1, man2, man3, man4, man5, man6, man7, man8]
 
 # for stage in man_stages:
 #    print stage
@@ -106,13 +106,53 @@ formated_text = formated_text.lower()
 formated_text = formated_text.split()
 
 
-def hangman_game():
+def menu():
+    q = input("Play again? y/n: ").lower()
+    if q == "y":
+        diff_prompt()
+    else:
+        print("Thanks for playing. Bye")
+
+easy = []
+normal = []
+hard = []
+
+for find in formated_text:
+    if len(find) > 3 and len(find) < 7:
+        easy.append(find)
+    elif len(find) > 7 and len(find) < 10:
+        normal.append(find)
+    elif len(find) > 10:
+        hard.append(find)
+# print(hard)
+
+
+def diff_prompt():
+    diff_set = input("Easy:e Normal:n Hard:h >>>").lower()
+    if diff_set == 'e':
+        hidden_word = random.choice(easy)
+        hangman_game(hidden_word)
+    elif diff_set == 'n':
+        hidden_word = random.choice(normal)
+        hangman_game(hidden_word)
+    elif diff_set == 'h':
+        hidden_word = random.choice(hard)
+        hangman_game(hidden_word)
+    else:
+        print("E, N, H: ")
+        diff_prompt()
+
+
+def hangman_game(hidden_word):
     print("Welcome to Hangman!")
 
-    rand_num = random.randint(1, 235886)
-    hidden_word = formated_text[rand_num]
-    hidden_word = str(hidden_word)
+    # hidden_word = random.choice()
+
+    # rand_num = random.randint(1, 235886)
+    # hidden_word = formated_text[rand_num]
+    # hidden_word = str(hidden_word)
     #  print(hidden_word)
+    # diff_prompt()
 
     word_len = len(hidden_word)
     print("The word is {} letters long.".format(word_len))
@@ -123,6 +163,7 @@ def hangman_game():
                            'w', 'x', 'y', 'z']
     turns = 8
     progress = []
+    punctuation = "., /\[]{}+_)(*&^%$#@!~`1234567890-=|?<>:;`)"
 
     for instance in range(word_len):
         progress.append('_')
@@ -136,10 +177,23 @@ def hangman_game():
 
         print("You have {} turns left".format(str(turns)))
         print(string_progress)
-        player_letter = input("Pick a letter, or press end to quit: ").lower()
+        player_letter = input("""Pick a letter, type STATUS to see your status, LETTERS to see unused letters, or END
+to quit: """).lower()
         if player_letter == "end":
             print("goodbye")
             break
+        elif player_letter == "letters":
+            print(str(letters_not_guessed))
+            continue
+        elif player_letter == 'status':
+            print(man_stages[turns])
+            continue
+        elif len(player_letter) > 1:
+            print("Only single letters please")
+            continue
+        elif player_letter in punctuation:
+            print("Only single letters please")
+            continue
         elif player_letter in letters_not_guessed:
             letters_not_guessed.remove(player_letter)
         else:
@@ -160,5 +214,8 @@ def hangman_game():
     else:
         print(man_fail + "The word was: {}".format(hidden_word))
 
+    menu()
 
-hangman_game()
+diff_prompt()
+
+# hangman_game()
